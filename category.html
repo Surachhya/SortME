@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generic Drag & Drop Groups</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+
+  <h2>Generic Drag & Drop Groups</h2>
+
+  <form id="groupForm" aria-label="Create new group">
+    <div>
+      <label for="groupTitle">Group Title:</label>
+      <input type="text" id="groupTitle" required placeholder="e.g. Fruits & Vegetables" />
+    </div>
+    <div>
+      <label>Categories (exactly two):</label><br/>
+      <input type="text" id="category1" required placeholder="Category 1 (e.g. Fruit)" style="width:45%; margin-right:10px;" />
+      <input type="text" id="category2" required placeholder="Category 2 (e.g. Vegetable)" style="width:45%;" />
+    </div>
+    <button type="submit">Add Group</button>
+  </form>
+
+  <div id="groupsContainer" aria-live="polite">
+    <!-- Groups will appear here -->
+  </div>
+</body>
+</html>
