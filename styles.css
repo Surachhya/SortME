@@ -9,6 +9,7 @@
       --color-item-1: #f4b400; /* yellowish */
       --color-item-2: #8BC34A; /* greenish */
       --color-btn-bg: #4CAF50;
+      --color-btn-bg-invert: #b196a1;
       --color-btn-bg-hover: #45a049;
       --color-btn-text: #fff;
       --color-input-border: #ccc;
@@ -24,7 +25,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: var(--color-bg);
       margin: 0;
-      padding: 20px;
+      padding: 0px;
       color: var(--color-text);
     }
 
@@ -33,6 +34,69 @@
       color: var(--color-heading);
       margin-bottom: 1rem;
     }
+
+    #authSection {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  max-width: 400px;
+  margin: 2rem auto;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+#authSection input {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+}
+#authSection button {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+#welcomeUser {
+  font-weight: bold;
+  margin: 1rem;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2f3e46;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+top: 0;
+z-index: 1000;
+margin-bottom: 20px;
+}
+
+.navbar .app-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.navbar .user-info {
+  margin-right: 1rem;
+  font-size: 0.95rem;
+}
+
+.logout-btn {
+  background-color: #ef4444;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}
+
 
     form {
       max-width: 600px;
@@ -183,6 +247,13 @@
       box-shadow: 0 2px 5px var(--color-box-shadow);
       user-select: none;
     }
+
+.selected-item {
+  outline: 1px dashed #b9c2ca;
+  background-color: #e3f2fd !important;
+}
+
+
     .box[data-box="source"] .item {
   background-color: var(--color-item-bg);
   color: var(--color-text);

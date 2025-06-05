@@ -1,3 +1,103 @@
+// AUTH: Handle login/signup
+const loginForm = document.getElementById("loginForm");
+const signupForm = document.getElementById("signupForm");
+const authSection = document.getElementById("authSection");
+const appContent = document.getElementById("appContent");
+const welcomeUser = document.getElementById("welcomeUser");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Toggle between login and signup forms
+document.getElementById("showSignup").addEventListener("click", (e) => {
+  e.preventDefault();
+  loginForm.style.display = "none";
+  signupForm.style.display = "block";
+});
+document.getElementById("showLogin").addEventListener("click", (e) => {
+  e.preventDefault();
+  signupForm.style.display = "none";
+  loginForm.style.display = "block";
+});
+
+// Get all users from localStorage
+function getUsers() {
+  return JSON.parse(localStorage.getItem("sort-users") || "{}");
+}
+// Save all users to localStorage
+function saveUsers(users) {
+  localStorage.setItem("sort-users", JSON.stringify(users));
+}
+// Save logged-in user info to localStorage
+function setLoggedInUser(email) {
+  localStorage.setItem("loggedInUser", JSON.stringify({ email }));
+}
+// Retrieve logged-in user email from localStorage
+function getLoggedInUser() {
+  const session = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+  return session.email || null;
+}
+
+// Logout function: clear session and reload page
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  location.reload();
+}
+logoutBtn.addEventListener("click", logout);
+
+// Handle login form submission
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+  const users = getUsers();
+
+  if (!users[email] || users[email].password !== password) {
+    alert("Invalid email or password.");
+    return;
+  }
+
+  setLoggedInUser(email);
+  showApp();
+});
+
+// Handle signup form submission
+signupForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+  const name = document.getElementById("signupName").value.trim();
+  const password = document.getElementById("signupPassword").value;
+  const users = getUsers();
+
+  if (users[email]) {
+    alert("User already exists.");
+    return;
+  }
+
+  users[email] = { name, password };
+  saveUsers(users);
+  setLoggedInUser(email);
+  showApp();
+});
+
+// Show app UI and update navbar after login
+function showApp() {
+  const email = getLoggedInUser();
+  if (!email) return;
+
+  const users = getUsers();
+  const user = users[email];
+  if (!user) return;
+
+  // Hide auth forms, show app content
+  authSection.style.display = "none";
+  appContent.style.display = "block";
+
+  // Show welcome message and logout button in navbar
+  welcomeUser.innerHTML = `Welcome, <strong>${user.name}</strong>`;
+  welcomeUser.style.display = "inline";
+  logoutBtn.style.display = "inline-block";
+}
+
+
 // State: all groups
 const groups = [];
 
@@ -26,7 +126,7 @@ function collapseAllExcept(groupId) {
 }
 
 // Create a new group panel DOM from group data and append to container
-function renderGroup(group) {
+function renderGroup(group, showForm) {
     const container = document.getElementById('groupsContainer');
 
     // Create panel
@@ -128,6 +228,63 @@ function renderGroup(group) {
         saveState();
     });
 
+    let selectedItem = null;
+
+    // Enable click-select only within this group's source box
+    boxesDiv.addEventListener("click", (e) => {
+        const clickedItem = e.target.closest('.item');
+        const clickedBox = e.target.closest('.box');
+
+        if (!clickedBox) return;
+
+        const boxType = clickedBox.dataset.box;
+
+        // Case 1: Click on an item in the source to select/deselect
+        if (boxType === 'source' && clickedItem) {
+            // Deselect if already selected
+            if (selectedItem === clickedItem) {
+                clickedItem.classList.remove('selected-item');
+                selectedItem = null;
+            } else {
+                // Remove selection from previous, if any
+                if (selectedItem) selectedItem.classList.remove('selected-item');
+                selectedItem = clickedItem;
+                selectedItem.classList.add('selected-item');
+            }
+            return;
+        }
+
+        // Case 2: Click on a target box to drop selected item
+        if (selectedItem && clickedBox.classList.contains('box') && boxType !== 'source') {
+            const targetCategory =
+                boxType === 'category1' ? group.categories[0] :
+                    boxType === 'category2' ? group.categories[1] : null;
+
+            const itemCategory = selectedItem.dataset.category;
+
+            if (!targetCategory) return;
+
+            if (itemCategory === targetCategory) {
+                // Success
+                selectedItem.classList.remove('category-1', 'category-2', 'selected-item');
+                selectedItem.classList.add(boxType === 'category1' ? 'category-1' : 'category-2');
+                clickedBox.appendChild(selectedItem);
+                saveState();
+            } else {
+                // Invalid
+                clickedBox.classList.add("invalid-drop");
+                setTimeout(() => clickedBox.classList.remove("invalid-drop"), 500);
+            }
+
+            // Clear selection
+            selectedItem.classList.remove('selected-item');
+            selectedItem = null;
+        }
+    });
+
+
+
+
     // Drag & Drop logic for boxes inside this group
     boxesDiv.querySelectorAll('.box').forEach(box => {
         box.addEventListener('dragover', (e) => e.preventDefault());
@@ -197,13 +354,14 @@ function createItemDiv(name, category, group) {
 
 // Save entire groups state in localStorage
 function saveState() {
-    // For each group, save items with their current container
+    const email = getLoggedInUser();
+    if (!email) return;
+
     document.querySelectorAll('.group-panel').forEach(panel => {
         const groupId = panel.dataset.groupId;
         const group = groups.find(g => g.id === groupId);
         if (!group) return;
 
-        // Gather items from boxes
         const items = [];
         panel.querySelectorAll('.box').forEach(box => {
             const boxType = box.getAttribute('data-box');
@@ -219,12 +377,16 @@ function saveState() {
         group.items = items;
     });
 
-    localStorage.setItem('dragDropGroups', JSON.stringify(groups));
+    localStorage.setItem(`dragDropGroups-${email}`, JSON.stringify(groups));
 }
+
 
 // Load from localStorage
 function loadState() {
-    const saved = localStorage.getItem('dragDropGroups');
+    const email = getLoggedInUser();
+    if (!email) return;
+
+    const saved = localStorage.getItem(`dragDropGroups-${email}`);
     if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
@@ -234,6 +396,7 @@ function loadState() {
         }
     }
 }
+
 
 // On form submit - add new group and render it
 document.getElementById('groupForm').addEventListener('submit', (e) => {
@@ -292,7 +455,20 @@ document.getElementById('groupForm').addEventListener('submit', (e) => {
 });
 
 // On page load, load saved state and render all groups
-window.addEventListener('load', () => {
-    loadState();
-    groups.forEach(g => renderGroup(g));
+window.addEventListener("DOMContentLoaded", () => {
+  let email = getLoggedInUser();
+
+if (email) {
+  showApp();
+  loadState();
+  groups.forEach(group => renderGroup(group));
+} else {
+    // Show login/signup forms and hide app content & navbar user info
+    authSection.style.display = "block";
+    appContent.style.display = "none";
+    welcomeUser.style.display = "none";
+    logoutBtn.style.display = "none";
+  }
 });
+
+
