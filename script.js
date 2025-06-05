@@ -8,93 +8,93 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 // Toggle between login and signup forms
 document.getElementById("showSignup").addEventListener("click", (e) => {
-  e.preventDefault();
-  loginForm.style.display = "none";
-  signupForm.style.display = "block";
+    e.preventDefault();
+    loginForm.style.display = "none";
+    signupForm.style.display = "block";
 });
 document.getElementById("showLogin").addEventListener("click", (e) => {
-  e.preventDefault();
-  signupForm.style.display = "none";
-  loginForm.style.display = "block";
+    e.preventDefault();
+    signupForm.style.display = "none";
+    loginForm.style.display = "block";
 });
 
 // Get all users from localStorage
 function getUsers() {
-  return JSON.parse(localStorage.getItem("sort-users") || "{}");
+    return JSON.parse(localStorage.getItem("sort-users") || "{}");
 }
 // Save all users to localStorage
 function saveUsers(users) {
-  localStorage.setItem("sort-users", JSON.stringify(users));
+    localStorage.setItem("sort-users", JSON.stringify(users));
 }
 // Save logged-in user info to localStorage
 function setLoggedInUser(email) {
-  localStorage.setItem("loggedInUser", JSON.stringify({ email }));
+    localStorage.setItem("loggedInUser", JSON.stringify({ email }));
 }
 // Retrieve logged-in user email from localStorage
 function getLoggedInUser() {
-  const session = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
-  return session.email || null;
+    const session = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    return session.email || null;
 }
 
 // Logout function: clear session and reload page
 function logout() {
-  localStorage.removeItem("loggedInUser");
-  location.reload();
+    localStorage.removeItem("loggedInUser");
+    location.reload();
 }
 logoutBtn.addEventListener("click", logout);
 
 // Handle login form submission
 loginForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-  const password = document.getElementById("loginPassword").value;
-  const users = getUsers();
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const password = document.getElementById("loginPassword").value;
+    const users = getUsers();
 
-  if (!users[email] || users[email].password !== password) {
-    alert("Invalid email or password.");
-    return;
-  }
+    if (!users[email] || users[email].password !== password) {
+        alert("Invalid email or password.");
+        return;
+    }
 
-  setLoggedInUser(email);
-  showApp();
+    setLoggedInUser(email);
+    showApp();
 });
 
 // Handle signup form submission
 signupForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const email = document.getElementById("signupEmail").value.trim().toLowerCase();
-  const name = document.getElementById("signupName").value.trim();
-  const password = document.getElementById("signupPassword").value;
-  const users = getUsers();
+    e.preventDefault();
+    const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+    const name = document.getElementById("signupName").value.trim();
+    const password = document.getElementById("signupPassword").value;
+    const users = getUsers();
 
-  if (users[email]) {
-    alert("User already exists.");
-    return;
-  }
+    if (users[email]) {
+        alert("User already exists.");
+        return;
+    }
 
-  users[email] = { name, password };
-  saveUsers(users);
-  setLoggedInUser(email);
-  showApp();
+    users[email] = { name, password };
+    saveUsers(users);
+    setLoggedInUser(email);
+    showApp();
 });
 
 // Show app UI and update navbar after login
 function showApp() {
-  const email = getLoggedInUser();
-  if (!email) return;
+    const email = getLoggedInUser();
+    if (!email) return;
 
-  const users = getUsers();
-  const user = users[email];
-  if (!user) return;
+    const users = getUsers();
+    const user = users[email];
+    if (!user) return;
 
-  // Hide auth forms, show app content
-  authSection.style.display = "none";
-  appContent.style.display = "block";
+    // Hide auth forms, show app content
+    authSection.style.display = "none";
+    appContent.style.display = "block";
 
-  // Show welcome message and logout button in navbar
-  welcomeUser.innerHTML = `Welcome, <strong>${user.name}</strong>`;
-  welcomeUser.style.display = "inline";
-  logoutBtn.style.display = "inline-block";
+    // Show welcome message and logout button in navbar
+    welcomeUser.innerHTML = `Welcome, <strong>${user.name}</strong>`;
+    welcomeUser.style.display = "inline";
+    logoutBtn.style.display = "inline-block";
 }
 
 
@@ -456,19 +456,19 @@ document.getElementById('groupForm').addEventListener('submit', (e) => {
 
 // On page load, load saved state and render all groups
 window.addEventListener("DOMContentLoaded", () => {
-  let email = getLoggedInUser();
+    let email = getLoggedInUser();
 
-if (email) {
-  showApp();
-  loadState();
-  groups.forEach(group => renderGroup(group));
-} else {
-    // Show login/signup forms and hide app content & navbar user info
-    authSection.style.display = "block";
-    appContent.style.display = "none";
-    welcomeUser.style.display = "none";
-    logoutBtn.style.display = "none";
-  }
+    if (email) {
+        showApp();
+        loadState();
+        groups.forEach(group => renderGroup(group));
+    } else {
+        // Show login/signup forms and hide app content & navbar user info
+        authSection.style.display = "block";
+        appContent.style.display = "none";
+        welcomeUser.style.display = "none";
+        logoutBtn.style.display = "none";
+    }
 });
 
 

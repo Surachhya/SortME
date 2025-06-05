@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,42 +8,43 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="./script.js" defer></script>
 </head>
+
 <body>
 
-<!-- Navbar always visible -->
-<nav class="navbar">
-  <div class="navbar-left">
-    <span class="app-title">Sort & Learn</span>
+  <!-- Navbar always visible -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <span class="app-title">Sort & Learn</span>
+    </div>
+    <div class="navbar-right">
+      <span id="welcomeUser" class="user-info" style="display:none;"></span>
+      <button id="logoutBtn" class="logout-btn" style="display:none;">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Authentication Section -->
+  <section id="authSection">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="submit">Login</button>
+      <p>or <a href="#" id="showSignup">Sign up</a></p>
+    </form>
+
+    <form id="signupForm" style="display:none;">
+      <input type="email" id="signupEmail" placeholder="Email" required />
+      <input type="text" id="signupName" placeholder="Your Name" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <button type="submit">Sign Up</button>
+      <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+    </form>
+  </section>
+
+  <!-- Main App Content (only visible after login) -->
+  <div id="appContent" style="display:none;">
+    <!-- Your group form, container, etc. go here -->
   </div>
-  <div class="navbar-right">
-    <span id="welcomeUser" class="user-info" style="display:none;"></span>
-    <button id="logoutBtn" class="logout-btn" style="display:none;">Logout</button>
-  </div>
-</nav>
-
-<!-- Authentication Section -->
-<section id="authSection">
-  <h2>Login</h2>
-  <form id="loginForm">
-    <input type="email" id="loginEmail" placeholder="Email" required />
-    <input type="password" id="loginPassword" placeholder="Password" required />
-    <button type="submit">Login</button>
-    <p>or <a href="#" id="showSignup">Sign up</a></p>
-  </form>
-
-  <form id="signupForm" style="display:none;">
-    <input type="email" id="signupEmail" placeholder="Email" required />
-    <input type="text" id="signupName" placeholder="Your Name" required />
-    <input type="password" id="signupPassword" placeholder="Password" required />
-    <button type="submit">Sign Up</button>
-    <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
-  </form>
-</section>
-
-<!-- Main App Content (only visible after login) -->
-<div id="appContent" style="display:none;">
-  <!-- Your group form, container, etc. go here -->
-</div>
 
 
 
@@ -53,8 +55,9 @@
       <input type="text" id="groupTitle" required placeholder="e.g. Fruits & Vegetables" />
     </div>
     <div>
-      <label>Categories (exactly two):</label><br/>
-      <input type="text" id="category1" required placeholder="Category 1 (e.g. Fruit)" style="width:45%; margin-right:10px;" />
+      <label>Categories (exactly two):</label><br />
+      <input type="text" id="category1" required placeholder="Category 1 (e.g. Fruit)"
+        style="width:45%; margin-right:10px;" />
       <input type="text" id="category2" required placeholder="Category 2 (e.g. Vegetable)" style="width:45%;" />
     </div>
     <button type="submit">Add Group</button>
@@ -64,4 +67,5 @@
     <!-- Groups will appear here -->
   </div>
 </body>
+
 </html>
